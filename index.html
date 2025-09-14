@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>TCS Digital Bus Pass</title>
+  <style>
+    :root {
+      /* For iPhone safe area insets */
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background-color: #000;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      position: relative;
+      min-height: 100vh;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    .header {
+      background-color: #6200ea;
+      color: white;
+      padding: 15px env(safe-area-inset-right) 15px env(safe-area-inset-left);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header .title {
+      flex-grow: 1;
+      font-weight: bold;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .bus-info {
+      background-color: #3d4fff;
+      margin: 16px;
+      padding: 18px;
+      border-radius: 10px;
+      text-align: center;
+      color: white;
+    }
+
+    .bus-info .station-name {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 4px 0;
+    }
+
+    .bus-info .arrow {
+      font-size: 30px;
+      margin: 4px 0;
+    }
+
+    .bus-info .timings {
+      font-size: 15px;
+      margin-top: 10px;
+      font-weight: 400;
+    }
+
+    .fixed-box {
+      position: relative;
+      width: calc(100% - 32px);
+      height: 350px;
+      margin: 16px;
+      padding: 12px;
+      background-color: #111;
+      border-radius: 10px;
+      border: 1px solid #444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fixed-box::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 30px solid rgb(31, 255, 31);
+      border-bottom: 30px solid transparent;
+      border-top-left-radius: 10px;
+    }
+
+    .qr-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+.qr-inner {
+  width: 120%;
+  height: 80%;
+  max-width: 600px;
+  padding: 1px;
+  background-color: #111;
+  border-radius: 10px;
+}
+
+
+
+    .section-content {
+      width: 100%;
+    }
+
+    .section-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .label {
+      color: gray;
+      font-size: 13px;
+    }
+
+    .value {
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .button {
+      width: calc(100% - 32px);
+      margin: 0 auto 20px auto;
+      padding: 15px;
+      text-align: center;
+      background-color: #6200ea;
+      border-radius: 25px;
+      font-weight: bold;
+      cursor: pointer;
+      color: white;
+    }
+
+    .fixed-title {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.fixed-title-line {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 100px;
+  color: #ffffff;
+  pointer-events: none;
+  z-index: 10;
+}
+
+
+    /* #detailsSection {
+      display: none;
+    } */
+     #detailsSection {
+  display: none;
+  position: relative;
+}
+
+.details-inner {
+  width: 120%;
+  height: 80%;
+  max-width: 600px;
+  padding: 10px;
+  margin: 20px auto 0 auto; /* top margin of 40px */
+  background-color: #111;
+  border-radius: 8px;
+}
+
+/* .qr-inner {
+  width: 120%;
+  height: 80%;
+  max-width: 600px;
+  padding: 1px;
+  background-color: #8e1b1b;
+  border-radius: 10px;
+} */
+
+
+    .footer-img {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .footer-img img {
+      max-width: 150px;
+      height: auto;
+      opacity: 2;
+    }
+
+    .sidenav {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      background-color: #1c1c1c;
+      overflow-x: hidden;
+      transition: 0.3s;
+      padding-top: 60px;
+      padding-left: env(safe-area-inset-left);
+    }
+
+    .sidenav a {
+      padding: 14px 28px;
+      text-decoration: none;
+      font-size: 18px;
+      color: #ccc;
+      display: flex;
+      align-items: center;
+      transition: 0.3s;
+    }
+
+    .sidenav a:hover {
+      background-color: #333;
+      color: #fff;
+    }
+
+    .sidenav .closebtn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .open-nav {
+      font-size: 24px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .sidenav a {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidenav -->
+  <div id="mySidenav" class="sidenav">
+    <span class="closebtn" onclick="closeNav()">×</span>
+    <a onclick="closeNav()"><span class="icon">🏠</span>&nbsp;Home</a>
+    <a href="#"><span class="icon">🚍</span>&nbsp;Apply Bus Pass</a>
+    <a href="#"><span class="icon">📝</span>&nbsp;Request Status</a>
+    <a href="#"><span class="icon">⚙️</span>&nbsp;Back to Home Page</a>
+    <a href="#"><span class="icon">🔓</span>&nbsp;Logout</a>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="open-nav" onclick="openNav()">☰</div>
+    <div class="title">Digital Bus Pass</div>
+    <div style="font-size: 24px; margin-right: 10px; filter: brightness(-50) invert(1);">🔔</div>
+  </div>
+
+  <!-- Bus Info -->
+  <div class="bus-info">
+    <div class="station-name">Thane Stn. E Kopari</div>
+    <div class="arrow">⇌</div>
+    <div class="station-name">TCS Olympus</div>
+    <div class="timings">Office In Time – 09:20 &nbsp;&nbsp; Office Out Time – 19:45</div>
+  </div>
+
+  <!-- QR Section -->
+  <div id="qrSection" class="fixed-box qr-container">
+    <div class="fixed-title">Confirmed Pass</div>
+    <div class="fixed-title-line">_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _</div>
+  <div class="qr-inner">
+    <img src="QR.png" alt="QR Code Placeholder" />
+  </div>
+</div>
+
+
+  <div id="detailsSection" class="fixed-box">
+    <div class="fixed-title">Confirmed Pass</div>
+    <div class="fixed-title-line">_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _</div>
+  <div class="details-inner">
+    <div class="section-content">
+      <div class="section-row">
+        <div>
+          <div class="label">Name</div>
+          <div class="value">VIDUL BHOSALE</div>
+        </div>
+        <div style="text-align: right;">
+          <div class="label">Employee ID</div>
+          <div class="value">2788236</div>
+        </div>
+      </div>
+      <div class="section-row">
+        <div>
+          <div class="label">Bus Stop Name</div>
+          <div class="value">Thane Stn. E Kopari</div>
+        </div>
+        <div style="text-align: right;">
+          <div class="label">Route Type</div>
+          <div class="value">B</div>
+        </div>
+      </div>
+      <div class="section-row">
+        <div>
+          <div class="label">Start Date</div>
+          <div class="value">01-Sep-2025</div>
+        </div>
+        <div style="text-align: right;">
+          <div class="label">End Date</div>
+          <div class="value">30-Sep-2025</div>
+        </div>
+      </div>
+      <div class="section-row">
+        <div>
+          <div class="label">Route</div>
+          <div class="value">Thane Stn. E Kopari To TCS Olympus<br />And Return Via-FAST</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Toggle Button -->
+  <div class="button" onclick="toggleView()" id="toggleBtn">View Details</div>
+
+  <!-- Footer -->
+  <div class="footer-img">
+    <img src="tcsw.png" alt="TCS Footer Logo">
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    function toggleView() {
+      const qr = document.getElementById("qrSection");
+      const details = document.getElementById("detailsSection");
+      const btn = document.getElementById("toggleBtn");
+
+      if (qr.style.display === "none") {
+        qr.style.display = "flex";
+        details.style.display = "none";
+        btn.innerText = "View Details";
+      } else {
+        qr.style.display = "none";
+        details.style.display = "flex";
+        btn.innerText = "View QR";
+      }
+    }
+
+    function openNav() {
+      document.getElementById("mySidenav").style.width = "280px";
+    }
+
+    function closeNav() {
+      document.getElementById("mySidenav").style.width = "0";
+    }
+  </script>
+</body>
+</html>
