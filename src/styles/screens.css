@@ -1,0 +1,242 @@
+/* ---------------------------------------------------------------
+   Screen-specific layout: the pass card, the pass list, settings.
+   --------------------------------------------------------------- */
+
+/* ---- Pass card -------------------------------------------------
+   Replaces the original .fixed-box. The old version used a fixed
+   350px height plus an inner element at width:120%, which is what
+   pushed the page wider than the viewport on phones. This version
+   is fluid and clips nothing.
+   ---------------------------------------------------------------- */
+.pass-card {
+  position: relative;
+  overflow: hidden; /* scoped to the card, to clip the corner flag only */
+  padding: var(--s-4);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  background-color: var(--c-surface);
+  margin-bottom: var(--s-4);
+}
+
+/* The green corner flag from the original design. */
+.pass-card__flag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 30px solid var(--c-accent);
+  border-bottom: 30px solid transparent;
+  pointer-events: none;
+}
+.pass-card--pending  .pass-card__flag { border-left-color: var(--c-warn); }
+.pass-card--rejected .pass-card__flag { border-left-color: var(--c-err); }
+.pass-card--expired  .pass-card__flag { border-left-color: var(--c-faint); }
+
+.pass-card__heading {
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-4);
+  border-bottom: 1px dashed var(--c-border);
+  text-align: center;
+}
+.pass-card__status {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+.pass-card__validity {
+  margin: var(--s-1) 0 0;
+  color: var(--c-muted);
+  font-size: 12px;
+}
+
+/* QR panel -------------------------------------------------------- */
+.pass-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+}
+.pass-qr__frame {
+  width: 100%;
+  max-width: 290px;
+  aspect-ratio: 1 / 1;
+  padding: 10px;
+  border-radius: var(--r-md);
+  background-color: #fff; /* QR codes need a light quiet zone to scan */
+}
+.pass-qr__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+}
+.pass-qr__caption {
+  margin: 0;
+  color: var(--c-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Details panel ---------------------------------------------------- */
+.pass-details .deflist + .deflist { margin-top: var(--s-4); }
+
+.pass-switcher {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-4);
+}
+.pass-switcher .select { flex: 1 1 auto; min-width: 0; }
+
+/* Segmented QR / Details toggle */
+.segmented {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: var(--s-4);
+  border: 1px solid var(--c-border-soft);
+  border-radius: var(--r-pill);
+  background-color: var(--c-surface);
+}
+.segmented__btn {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 38px;
+  padding: var(--s-2) var(--s-3);
+  border: 0;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--c-muted);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background-color var(--dur), color var(--dur);
+}
+.segmented__btn[aria-selected="true"] {
+  background-color: var(--c-brand);
+  color: #fff;
+}
+
+/* ---- Pass list --------------------------------------------------- */
+.passlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s-3);
+}
+@media (min-width: 720px) {
+  .passlist { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.passitem {
+  min-width: 0;
+  padding: var(--s-4);
+  border: 1px solid var(--c-border-soft);
+  border-radius: var(--r-md);
+  background-color: var(--c-surface);
+}
+.passitem.is-active { border-color: var(--c-brand-strong); }
+
+.passitem__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-2);
+}
+.passitem__title {
+  flex: 1 1 140px;
+  min-width: 0;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+.passitem__meta {
+  margin: 0 0 var(--s-3);
+  color: var(--c-muted);
+  font-size: var(--fs-label);
+  line-height: 1.55;
+}
+.passitem__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+.passitem__actions .btn { flex: 1 1 92px; }
+
+/* ---- Filters ----------------------------------------------------- */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-bottom: var(--s-4);
+}
+.filter-btn {
+  min-height: 36px;
+  padding: var(--s-2) var(--s-4);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--c-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.filter-btn[aria-pressed="true"] {
+  background-color: var(--c-brand);
+  border-color: var(--c-brand);
+  color: #fff;
+}
+
+/* ---- Settings ----------------------------------------------------- */
+.setting-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--c-border-soft);
+}
+.setting-row:last-child { border-bottom: 0; }
+.setting-row__text { flex: 1 1 180px; min-width: 0; }
+.setting-row__title { font-weight: 600; }
+.setting-row__desc { color: var(--c-muted); font-size: 12px; }
+.setting-row .btn { flex: 0 1 auto; width: auto; }
+
+.kv {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--s-2);
+  padding: var(--s-2) 0;
+  font-size: 14px;
+}
+.kv__k { color: var(--c-muted); }
+.kv__v { font-weight: 600; text-align: right; min-width: 0; }
+
+/* ---- 404 ----------------------------------------------------------- */
+.notfound { text-align: center; padding-block: var(--s-8); }
+.notfound__code {
+  margin: 0;
+  font-size: clamp(56px, 22vw, 96px);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--c-brand-strong);
+}
+
+/* ---- Wide screens ---------------------------------------------------
+   The app is phone-shaped by design. On a desktop it is centred as a
+   single column rather than stretched, which keeps the layout honest
+   at every width.
+   ---------------------------------------------------------------- */
+@media (min-width: 900px) {
+  .app { background-color: #0a0a0a; }
+  .app-main { padding-top: var(--s-2); }
+}

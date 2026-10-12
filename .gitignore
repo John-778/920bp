@@ -1,0 +1,42 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+*.local
+
+# env
+.env
+.env.*
+!.env.example
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Android build output (the android/ project itself IS committed)
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/app/release/
+android/capacitor-cordova-android-plugins/
+*.keystore
+!debug.keystore
+keystore.properties
+
+# iOS build output (the ios/ project itself IS committed)
+ios/App/build/
+ios/App/Pods/
+ios/App/output/
+ios/App/App/public/
+ios/DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# logs
+*.log
+npm-debug.log*

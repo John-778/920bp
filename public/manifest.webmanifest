@@ -1,0 +1,48 @@
+{
+  "name": "Digital Bus Pass",
+  "short_name": "Bus Pass",
+  "description": "Keep your employee bus pass details - route, stops, validity dates and timings - on your own phone, ready to show offline.",
+  "start_url": "./index.html#/",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#000000",
+  "theme_color": "#6200ea",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "travel",
+    "utilities",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "All passes",
+      "url": "./index.html#/passes"
+    },
+    {
+      "name": "Add a pass",
+      "url": "./index.html#/apply"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+/* ---------------------------------------------------------------
+   Design tokens - derived from the original single-file pass UI so
+   the existing TCS brand look (purple header, indigo route card,
+   near-black surface) is preserved exactly.
+   --------------------------------------------------------------- */
+:root {
+  color-scheme: dark;
+
+  /* Brand */
+  --c-brand: #6200ea;
+  --c-brand-strong: #7a28ff;
+  --c-brand-ink: #ffffff;
+  --c-route: #3d4fff;
+  --c-accent: #1fff1f;
+
+  /* Surfaces */
+  --c-bg: #000000;
+  --c-surface: #111111;
+  --c-surface-2: #1c1c1c;
+  --c-surface-3: #262626;
+  --c-border: #444444;
+  --c-border-soft: #2e2e2e;
+
+  /* Text */
+  --c-text: #ffffff;
+  --c-muted: #9b9b9b;
+  --c-faint: #6f6f6f;
+
+  /* Status */
+  --c-ok: #1fc16b;
+  --c-ok-bg: rgba(31, 193, 107, 0.14);
+  --c-warn: #f5a524;
+  --c-warn-bg: rgba(245, 165, 36, 0.14);
+  --c-err: #ff5a5f;
+  --c-err-bg: rgba(255, 90, 95, 0.14);
+  --c-info: #3d8bff;
+
+  /* Spacing */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+
+  /* Radii */
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 16px;
+  --r-pill: 999px;
+
+  /* Type */
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial,
+    "Helvetica Neue", sans-serif;
+  --fs-label: 13px;
+  --fs-body: 15px;
+  --fs-title: 18px;
+
+  /* Layout */
+  --shell-max: 560px;
+  --shell-max-wide: 760px;
+  --tap: 44px; /* minimum touch target */
+  --header-h: 56px;
+
+  /* Safe areas (fall back to 0 on platforms without insets) */
+  --sat: env(safe-area-inset-top, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+
+  --shadow-1: 0 2px 10px rgba(0, 0, 0, 0.5);
+  --shadow-2: 0 10px 40px rgba(0, 0, 0, 0.7);
+  --dur: 220ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur: 0ms; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
