@@ -1,0 +1,62 @@
+name: Deploy web app
+
+# Publishes the app to GitHub Pages. That URL is what makes it installable on
+# an iPhone without a Mac, an Apple ID or a sideloading tool: open it in
+# Safari, Share -> Add to Home Screen, and it runs full-screen from its own
+# icon, offline, with no signature to expire.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'APP/**'
+      - 'scripts/stage-web.mjs'
+      - '.github/workflows/pages.yml'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never run two deploys at once; let an in-flight one finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Stage the web app
+        run: npm run stage
+
+      - name: Check it is installable
+        run: |
+          set -euo pipefail
+          for f in index.html manifest.webmanifest sw.js \
+                   icons/apple-touch-icon.png icons/icon-192.png \
+                   css/style.css js/app.js js/qrcode.min.js; do
+            test -f "dist/$f" || { echo "missing dist/$f"; exit 1; }
+          done
+          node -e "JSON.parse(require('fs').readFileSync('dist/manifest.webmanifest'))"
+          grep -q 'JOHN DOE' dist/js/app.js    # placeholder seed, not a real name
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

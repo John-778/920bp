@@ -18,8 +18,15 @@ const src = join(root, 'APP');
 const dist = join(root, 'dist');
 
 // Everything the app loads. reference/ (design photos) and the built .apk
-// stay out of the bundle.
-const ENTRIES = ['index.html', 'css', 'js', 'assets'];
+// and .ipa stay out of the bundle.
+//
+// manifest/icons/sw.js only matter to the web build - the native apps ignore
+// them - but they are copied anyway so dist/ is a complete, installable web
+// app that can be served as-is.
+const ENTRIES = [
+  'index.html', 'css', 'js', 'assets',
+  'manifest.webmanifest', 'icons', 'sw.js',
+];
 
 if (!existsSync(src)) {
   console.error(`No APP/ directory at ${src}`);
