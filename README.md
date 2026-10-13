@@ -395,6 +395,39 @@ secrets added to the workflow; Apple allows no way around that.
 | CocoaPods | **not resolved** — needs macOS |
 | Compiled app | **not built** — needs macOS or the workflow above |
 
+### Installing on a physical iPhone from Windows
+
+The `device-ipa` job in the workflow produces **`DigitalBusPass-unsigned.ipa`**
+(arm64, iphoneos SDK). Download it from the run's artifacts, or run
+`gh run download <run-id> -n DigitalBusPass-ipa-unsigned`.
+
+It is **unsigned**, and iOS will not run an unsigned app. Signing needs an Apple
+identity, and Apple issues those only through Xcode or a paid Developer account -
+CI cannot create one. So the `.ipa` has to be signed on your PC with your own
+Apple ID, by a sideloading tool:
+
+1. Install **Sideloadly** (<https://sideloadly.io>) or **AltStore**
+   (<https://altstore.io>). Both need Apple's own iTunes and iCloud for Windows -
+   the versions from apple.com, not the Microsoft Store ones.
+2. Connect the iPhone by USB and trust the computer.
+3. Drag `DigitalBusPass-unsigned.ipa` in, pick the device, enter your Apple ID,
+   and start. The tool re-signs the app with your account and installs it.
+4. On the phone: **Settings → General → VPN & Device Management →** trust the
+   developer certificate. The app then opens.
+
+What a free Apple ID costs you: the signature lasts **7 days**, after which the app
+stops opening until it is re-signed (AltStore can refresh it over Wi-Fi
+automatically; Sideloadly is manual). Three sideloaded apps at a time. A paid
+Developer account ($99/year) extends the signature to a year and allows TestFlight.
+
+These tools take your Apple ID credentials. That is inherent to signing with your
+own account, not to this app - use an app-specific password where the tool supports
+one, and read what you are installing first.
+
+> With a Mac, skip all of it: `npm run ios:open`, pick your Team under
+> Signing & Capabilities, plug the phone in, press ▶. A free Apple ID still gives
+> the same 7-day limit, but nothing else is needed.
+
 ### Distribution
 
 | Route | Needs |

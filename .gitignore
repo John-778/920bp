@@ -49,3 +49,4 @@ npm-debug.log*
 APP/reference/
 APP/*.apk
 *.apk
+*.ipa
