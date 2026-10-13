@@ -5,14 +5,13 @@ name: Deploy web app
 # Safari, Share -> Add to Home Screen, and it runs full-screen from its own
 # icon, offline, with no signature to expire.
 
+# Manual only. This needs the repository's Pages source set to "GitHub
+# Actions" (Settings -> Pages -> Build and deployment -> Source). While the
+# source is still "Deploy from a branch", this workflow cannot deploy and
+# would fail on every push - so it does not run automatically. Flip that
+# setting, then run this once and it takes over the site.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'APP/**'
-      - 'scripts/stage-web.mjs'
-      - '.github/workflows/pages.yml'
 
 permissions:
   contents: read
