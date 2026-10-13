@@ -395,7 +395,28 @@ secrets added to the workflow; Apple allows no way around that.
 | CocoaPods | **not resolved** — needs macOS |
 | Compiled app | **not built** — needs macOS or the workflow above |
 
-### Installing on a physical iPhone from Windows
+### Installing on an iPhone, the easy way (no Mac, no Apple ID)
+
+**<https://john-778.github.io/920bp/APP/>**
+
+The app uses no native capability - no camera, no geolocation, no Capacitor
+plugin - so it runs identically as a web app. On the iPhone:
+
+1. Open that link **in Safari** (not Chrome - only Safari can install to the
+   home screen on iOS).
+2. Tap **Share** (the square with the arrow) **-> Add to Home Screen -> Add**.
+
+It then has its own icon, opens full screen with no browser chrome, and works
+with no signal - the service worker precaches all ten files it is made of.
+Nothing expires, nothing needs re-signing, and the passes you enter stay on the
+phone in that app's own storage.
+
+The site is served from the `main` branch, so a push updates it. To serve it at
+the root `https://john-778.github.io/920bp/` instead of `/APP/`, set **Settings
+-> Pages -> Build and deployment -> Source** to **GitHub Actions**, then run the
+"Deploy web app" workflow once.
+
+### Installing the native build on a physical iPhone, from Windows
 
 The `device-ipa` job in the workflow produces **`DigitalBusPass-unsigned.ipa`**
 (arm64, iphoneos SDK). Download it from the run's artifacts, or run
