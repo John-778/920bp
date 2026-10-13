@@ -11,13 +11,17 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "images": "node scripts/optimize-images.mjs",
-    "sync": "npm run build && cap sync",
+    "stage": "node scripts/stage-web.mjs",
+    "sync": "npm run stage && cap sync",
     "android:open": "cap open android",
     "android:run": "npm run sync && cap run android",
     "android:apk": "npm run sync && node scripts/gradle.mjs assembleDebug",
     "android:bundle": "npm run sync && node scripts/gradle.mjs bundleRelease",
     "ios:open": "cap open ios",
     "ios:run": "npm run sync && cap run ios",
+    "ios:pods": "npm run sync && cd ios/App && pod install",
+    "ios:sim": "npm run sync && node scripts/xcode.mjs simulator",
+    "ios:archive": "npm run sync && node scripts/xcode.mjs archive",
     "verify": "npm run test && npm run build"
   },
   "dependencies": {

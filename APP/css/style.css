@@ -1,0 +1,270 @@
+/* =========================================================================
+   Digital Bus Pass - standalone clone of the eTMS bus pass screens
+   Built to match the real-device screenshots in ./reference
+   ========================================================================= */
+
+:root {
+  --purple:        #492094;
+  --primary:       #482093;   /* buttons (new_primary_color)               */
+  --route-a:       #2563f0;   /* route card gradient start (blue)          */
+  --route-b:       #6a17c9;   /* route card gradient end (purple)          */
+  --green:         #3dbf1e;   /* confirmed-pass corner accent (lime green) */
+  --label:         #8a8a8a;
+  --value:         #4a4a4a;
+  --card-radius:   8px;
+  --max-w:         480px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+[hidden] { display: none !important; }
+
+html, body { margin: 0; padding: 0; height: 100%; }
+
+body {
+  font-family: "Roboto", "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: #ffffff;
+  color: var(--value);
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;   /* iOS must not inflate text on rotate */
+}
+
+/* Safe areas (iPhone notch / Dynamic Island / home indicator).
+   Every env() rule below is paired with a plain fallback first, and env()
+   resolves to 0 where there is no inset - so Android is untouched. */
+
+/* ====================== Welcome / service selection ===================== */
+#welcome {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: linear-gradient(170deg, #3733e3 0%, #4a1fd4 55%, #6a1ccf 100%);
+  display: flex;
+  justify-content: center;
+}
+.welcome-inner {
+  width: 100%;
+  max-width: var(--max-w);
+  padding: 54px 26px 40px;
+  padding-top: calc(54px + env(safe-area-inset-top));
+  padding-bottom: calc(40px + env(safe-area-inset-bottom));
+  color: #fff;
+  text-align: center;
+}
+.w-title-sm { font-size: 24px; font-weight: 400; }
+.w-title-lg { font-size: 32px; font-weight: 700; margin-top: 4px; }
+.w-sub { font-size: 13px; letter-spacing: 1.5px; font-weight: 600; margin-top: 18px; opacity: .95; }
+.service-list { margin-top: 40px; display: flex; flex-direction: column; gap: 18px; }
+.service-pill {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  padding: 18px 26px;
+  border: 1.5px solid rgba(255,255,255,.85);
+  border-radius: 40px;
+  background: rgba(255,255,255,.07);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+}
+.service-pill:active { background: rgba(255,255,255,.18); }
+.service-pill svg { width: 34px; height: 34px; fill: #fff; flex: 0 0 34px; }
+
+/* ====================== App shell ===================== */
+#app {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 24px rgba(0,0,0,.12);
+  overflow: hidden;
+}
+
+/* ---- Toolbar ---------------------------------------------------------- */
+.toolbar {
+  background: linear-gradient(90deg, #401a93 0%, #5d27c4 100%);
+  color: #fff;
+  height: 56px;
+  flex: 0 0 56px;
+  height: calc(56px + env(safe-area-inset-top));
+  flex-basis: calc(56px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  padding-top: env(safe-area-inset-top);   /* title clears the status bar */
+  gap: 6px;
+  z-index: 20;
+}
+.toolbar .title { font-size: 18px; font-weight: 500; flex: 1; padding-left: 6px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.icon-btn {
+  background: none; border: 0; padding: 8px; cursor: pointer; color: #fff;
+  display: inline-flex; align-items: center; justify-content: center; border-radius: 50%;
+}
+.icon-btn:active { background: rgba(255,255,255,.18); }
+.icon-btn svg { width: 24px; height: 24px; display: block; }
+.icon-btn.bell { position: relative; }
+.icon-btn.bell::after {
+  content: ""; position: absolute; top: 7px; right: 8px;
+  width: 6px; height: 6px; border-radius: 50%; background: #ff5a5a;
+}
+
+/* ---- Scroll area ------------------------------------------------------ */
+.screen { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; display: flex; flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom); }
+
+/* ---- Route card (gradient) ------------------------------------------- */
+.route-card {
+  margin: 12px 12px 0;
+  background: linear-gradient(95deg, var(--route-a) 0%, var(--route-b) 100%);
+  border-radius: var(--card-radius);
+  padding: 16px 16px 14px;
+  color: #fff;
+  text-align: center;
+}
+.route-card .stop { font-size: 17px; font-weight: 400; padding: 2px 4px; word-break: break-word; }
+.route-card .route-arrow { display: flex; justify-content: center; padding: 6px 0; }
+.route-card .route-arrow svg { width: 26px; height: 26px; }
+.route-times {
+  display: flex; justify-content: center; gap: 4px 18px;
+  font-size: 15px; font-weight: 400; margin-top: 10px; flex-wrap: wrap;
+}
+.route-times.both { justify-content: space-between; flex-wrap: nowrap; }
+
+/* ---- White pass card -------------------------------------------------- */
+.pass-card {
+  position: relative;
+  margin: 12px 12px 4px;
+  background: #fff;
+  border-radius: var(--card-radius);
+  box-shadow: 0 1px 7px rgba(0,0,0,.14);
+  overflow: hidden;
+}
+/* green concave corner gusset (carved by an elliptical arc) */
+.pass-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 46px; height: 66px;
+  background: radial-gradient(ellipse farthest-side at 100% 100%,
+              transparent calc(100% - 1.2px), var(--green) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+.pass-card .pass-heading {
+  position: relative; z-index: 2;
+  text-align: center; font-weight: 500; font-size: 18px;
+  color: #555; padding: 16px 10px 8px;
+}
+.dotted { border: 0; border-top: 1.5px dashed #cfcfcf; margin: 0 14px; }
+
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; padding: 4px 20px 0; }
+.detail-grid .cell { min-width: 0; padding: 16px 0 0; }
+.detail-grid .cell.right { text-align: right; }
+.detail-grid .lbl { font-size: 15px; color: var(--label); margin-bottom: 7px; }
+.detail-grid .val { font-size: 16px; color: var(--value); word-break: break-word; }
+
+.route-name { text-align: center; font-size: 15px; color: #555; padding: 18px 18px 6px; line-height: 1.45; }
+
+/* optional bus number + seat row */
+.bus-seat-row { display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; padding: 16px 20px 0; }
+.bus-seat-row .bus-no .lbl { font-size: 15px; color: var(--label); margin-bottom: 5px; }
+.bus-seat-row .bus-no .val { font-size: 16px; font-weight: 700; color: #262626; }
+.seat-badge { display: inline-flex; align-items: center; gap: 6px; background: #e2d6f9;
+  color: var(--primary); font-weight: 700; font-size: 16px; border-radius: 5px; padding: 8px 18px; white-space: nowrap; }
+.seat-badge svg { width: 16px; height: 18px; }
+
+/* QR face - code only, no name underneath (matches the reference photos) */
+.qr-face { display: flex; flex-direction: column; align-items: center; padding: 16px 14px 14px; }
+.qr-face .qr-box { width: 100%; max-width: 400px; }
+/* aspect-ratio keeps it square on engines that don't infer height from the
+   viewBox (older WKWebView), so the code never renders stretched */
+.qr-face .qr-box svg { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; }
+
+/* toggle button - flush strip at bottom of card */
+.toggle-btn {
+  display: block; width: 100%; height: 48px; border: 0; margin-top: 14px;
+  background: var(--primary); color: #fff; font-size: 16px; font-weight: 500; cursor: pointer;
+}
+.toggle-btn:active { opacity: .92; }
+
+/* ---- TCS logo footer -------------------------------------------------- */
+.brand-footer { padding: 18px 0 16px; display: flex; justify-content: center; }
+.brand-footer img { height: 40px; width: auto; }
+
+/* ---- Empty / stub state ----------------------------------------------- */
+.empty-state { flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center; padding: 48px 28px; color: #666; gap: 18px; }
+.empty-state svg { width: 54px; height: 54px; fill: #cdcdcd; }
+.empty-state p { margin: 0; font-size: 15px; line-height: 1.5; }
+
+/* ---- My Passes / Request status list ---------------------------------- */
+.list-screen { padding: 14px 14px 20px; }
+.list-item { background: #fff; border-radius: var(--card-radius); box-shadow: 0 1px 6px rgba(0,0,0,.13);
+  padding: 14px 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px;
+  cursor: pointer; border-left: 5px solid transparent; }
+.list-item.active { border-left-color: var(--green); }
+.list-item .li-main { flex: 1; min-width: 0; }
+.list-item .li-route { font-weight: 600; font-size: 15px; color: #333;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.list-item .li-sub { font-size: 13px; color: var(--label); margin-top: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.li-badge { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 10px;
+  background: #e2d6f9; color: var(--primary); white-space: nowrap; }
+.li-actions { display: flex; gap: 2px; }
+.li-actions .icon-btn svg { width: 20px; height: 20px; }
+.li-actions .icon-btn { color: var(--primary); }
+.li-actions .icon-btn.danger { color: #ed3d38; }
+.list-add { position: sticky; bottom: 14px; margin: 6px 2px 0; }
+
+/* ---- Form ------------------------------------------------------------- */
+.form-screen { padding: 16px 16px 28px; }
+.field { margin-bottom: 15px; }
+.field label { display: block; font-size: 13px; color: var(--label); margin-bottom: 6px; font-weight: 500; }
+.field input, .field select { width: 100%; height: 46px; border: 1px solid #d9d9df; border-radius: 6px;
+  padding: 0 12px; font-size: 16px; color: #262626; background: #fff; font-family: inherit; }
+.field input:focus, .field select:focus { outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(72,32,147,.14); }
+.field-row { display: flex; gap: 12px; }
+.field-row .field { flex: 1; min-width: 0; }
+.form-actions { display: flex; gap: 12px; margin-top: 8px; }
+.btn { flex: 1; height: 48px; border: 0; border-radius: 6px; font-size: 15px; font-weight: 700; cursor: pointer; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-ghost { background: #eceaf3; color: var(--primary); }
+.section-label { font-size: 12px; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--primary); font-weight: 700; margin: 4px 0 12px; }
+
+/* ---- Drawer ----------------------------------------------------------- */
+.scrim { position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  opacity: 0; visibility: hidden; transition: opacity .25s ease; z-index: 40; }
+.scrim.open { opacity: 1; visibility: visible; }
+.drawer { position: fixed; top: 0; left: 0; height: 100%; width: 300px; max-width: 84%;
+  background: #fff; transform: translateX(-100%); transition: transform .25s ease; z-index: 50;
+  display: flex; flex-direction: column; box-shadow: 2px 0 14px rgba(0,0,0,.2); }
+.drawer.open { transform: translateX(0); }
+.drawer-header { background: linear-gradient(90deg, #401a93 0%, #5d27c4 100%);
+  color: #fff; padding: 30px 20px 22px; font-size: 17px; font-weight: 600;
+  padding-top: calc(30px + env(safe-area-inset-top)); }
+.drawer nav { padding: 6px 0; flex: 1; overflow-y: auto;
+  padding-bottom: calc(6px + env(safe-area-inset-bottom)); }
+.drawer nav a { display: flex; align-items: center; gap: 22px; padding: 15px 22px;
+  color: #3a3a3a; text-decoration: none; font-size: 15px; cursor: pointer; }
+.drawer nav a svg { width: 22px; height: 22px; fill: #6d6d6d; flex: 0 0 22px; }
+.drawer nav a.active { background: #f1edfa; color: var(--primary); }
+.drawer nav a.active svg { fill: var(--primary); }
+.drawer nav a:active { background: #f1edfa; }
+
+/* ---- Toast ------------------------------------------------------------ */
+.toast { position: fixed; left: 50%; bottom: 28px;
+  bottom: calc(28px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px);
+  background: #323232; color: #fff; padding: 11px 20px; border-radius: 24px; font-size: 14px;
+  opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 80;
+  max-width: 88%; text-align: center; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }

@@ -1,0 +1,89 @@
+name: iOS build
+
+# Builds the iOS app on a macOS runner, because Xcode and CocoaPods do not run
+# on Windows. The simulator build below is unsigned: it needs no Apple
+# Developer account, no certificates and no secrets, and it is what proves the
+# project actually compiles. Putting the app on a physical iPhone needs a
+# signing Team - see README section 8.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'APP/**'
+      - 'ios/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'capacitor.config.json'
+      - '.github/workflows/ios.yml'
+
+jobs:
+  simulator:
+    name: Build for the iOS Simulator (unsigned)
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # dist/ and ios/App/App/public are build output and are not committed,
+      # so the web app has to be staged and copied in here.
+      - name: Stage the web app
+        run: npm run stage
+
+      - name: Sync it into the Xcode project
+        run: npx cap sync ios
+
+      - name: Resolve CocoaPods
+        working-directory: ios/App
+        run: pod install --repo-update
+
+      - name: Build
+        run: |
+          xcodebuild \
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -derivedDataPath ios/build \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      # Smoke test: boot a simulator, install the app and launch it. Catches a
+      # bundle that compiles but cannot start - a missing web asset, say.
+      - name: Launch it on a simulator
+        run: |
+          set -euo pipefail
+          APP=ios/build/Build/Products/Debug-iphonesimulator/App.app
+
+          # The web app really shipped inside the bundle, with the placeholder
+          # seed rather than anyone's real name.
+          test -f "$APP/public/js/app.js"
+          grep -q 'JOHN DOE' "$APP/public/js/app.js"
+
+          UDID=$(xcrun simctl list devices available --json \
+            | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; \
+                print(next(x['udid'] for v in d.values() for x in v if x['name'].startswith('iPhone')))")
+          xcrun simctl boot "$UDID"
+          xcrun simctl install "$UDID" "$APP"
+          xcrun simctl launch "$UDID" com.vidulbhosale.buspass
+          sleep 8
+          xcrun simctl io "$UDID" screenshot launch.png
+
+      - name: Upload the app and the launch screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: DigitalBusPass-iOS-simulator
+          path: |
+            ios/build/Build/Products/Debug-iphonesimulator/App.app
+            launch.png
+          if-no-files-found: error

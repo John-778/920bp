@@ -160,13 +160,22 @@ npm install
 | `npm run test:watch` | Watch mode |
 | `npm run verify` | Tests + production build |
 | `npm run images` | Re-run the asset pipeline only |
-| `npm run sync` | Build and copy the web app into both native projects |
+| `npm run stage` | Copy the shipped app in `APP/` into `dist/` |
+| `npm run sync` | Stage and copy the web app into both native projects |
 | `npm run android:apk` | Sync, then build a debug APK |
 | `npm run android:bundle` | Sync, then build a release AAB for Play |
 | `npm run android:open` | Open the project in Android Studio |
 | `npm run android:run` | Sync and run on a connected device/emulator |
 | `npm run ios:open` | Open the workspace in Xcode (macOS) |
 | `npm run ios:run` | Sync and run on a simulator/device (macOS) |
+| `npm run ios:pods` | Sync, then resolve CocoaPods (macOS, first build) |
+| `npm run ios:sim` | Sync, then build an unsigned app for the Simulator (macOS) |
+| `npm run ios:archive` | Sync, then archive a signed Release build (macOS) |
+
+> `stage` is what puts the right app in `dist/`. The app that ships on both
+> platforms is the standalone build in **`APP/`** (plain HTML/CSS/JS); `vite
+> build` stages the older `src/` app instead, so the native build path goes
+> through `stage`, never `build`.
 
 ---
 
@@ -311,37 +320,80 @@ unsigned artifact. The version comes from `package.json`: `2.0.0` becomes
 
 ## 8. iOS build and installation
 
-### Status: **project generated, build not verified**
+### Status: **project complete, not yet compiled**
 
-The Xcode project exists at `ios/App/App.xcodeproj`, configured with the app name,
-bundle id `com.vidulbhosale.buspass`, version 2.0.0, deployment target iOS 14, the
-generated icon and splash sets, dark interface style, and `arm64` as the required
-capability (Capacitor's template ships `armv7`, which App Store Connect rejects).
+The Xcode project is at `ios/App/App.xcodeproj`, with the app name, bundle id
+`com.vidulbhosale.buspass`, version 2.0.0, deployment target iOS 14, the generated
+icon and splash sets, a light interface style (the pass UI is a light design, and
+this keeps WKWebView's date/time pickers light to match), and `arm64` as the
+required capability (Capacitor's template ships `armv7`, which App Store Connect
+rejects). The same web app ships here as on Android — `ios/App/App/public` and
+`android/app/src/main/assets/public` are copied from one `dist/`, byte for byte.
 
-**It has not been compiled.** Building iOS requires Xcode and CocoaPods, which only
-run on macOS; this project was developed on Windows. `npx cap add ios` warned
-`Skipping pod install because CocoaPods is not installed` — the native dependencies
-have therefore never been resolved, and the first build on a Mac may surface issues
-that cannot be seen from here. Treat the steps below as the documented path, not as a
-verified one.
+**It has not been compiled.** Xcode and CocoaPods run only on macOS, and this
+project was developed on Windows: `npx cap add ios` warned `Skipping pod install
+because CocoaPods is not installed`, so the native dependencies have never been
+resolved. The first build may surface issues that cannot be seen from Windows.
+Everything that *can* be prepared without a Mac has been — see
+[What is ready](#what-is-ready) below.
 
-### On a Mac
+### Option A — on a Mac
 
 ```bash
 # once
 sudo gem install cocoapods
 
 npm install
-npm run build
-npx cap sync ios          # resolves the pods that were skipped on Windows
+npm run sync              # stages APP/ into dist/ and copies it into ios/
+npm run ios:pods          # resolves the pods that were skipped on Windows
 npm run ios:open          # opens ios/App/App.xcworkspace
 ```
 
 In Xcode: select the **App** target → **Signing & Capabilities** → choose your Team.
 A free Apple ID will sign builds onto your own device for 7 days. Running on a
-simulator needs no account.
+simulator needs no account at all.
 
-Press ▶ to build and run.
+Press ▶ to build and run. From the command line instead:
+
+```bash
+npm run ios:sim           # unsigned build for the Simulator - no account needed
+npm run ios:archive       # signed Release archive (needs a Team)
+```
+
+### Option B — without a Mac, on GitHub Actions
+
+`.github/workflows/ios.yml` builds this project on a macOS runner. It needs no
+Apple account, no certificates and no secrets, because it targets the Simulator
+and builds unsigned.
+
+```bash
+git push                                   # the workflow runs on push to main
+gh workflow run "iOS build"                # or trigger it by hand
+```
+
+It runs `pod install`, compiles, then boots a simulator, installs the app and
+launches it, and uploads `App.app` plus a screenshot of the running app as a build
+artifact. That is also the first real check that the project compiles — until that
+workflow goes green, the iOS build is unverified.
+
+This path gives a Simulator build. Installing on a **physical iPhone** needs a
+signing identity from an Apple account, so it needs either a Mac or signing
+secrets added to the workflow; Apple allows no way around that.
+
+### What is ready
+
+| Piece | State |
+|---|---|
+| Xcode project, target, build settings | generated by Capacitor, bundle id and version set |
+| `App.xcworkspace` | **added** — the workspace had no `contents.xcworkspacedata`, so it could not be opened at all |
+| Shared `App` scheme | **added** — `xcodebuild -scheme App` needs it, and Xcode only auto-creates schemes in the IDE |
+| Interface style | **changed** `Dark` → `Light` to match the white pass UI |
+| Safe areas | **added** to the CSS — toolbar and drawer clear the notch / Dynamic Island, content clears the home indicator |
+| Form inputs | **16px** — below 16px iOS zooms the page in when a field takes focus |
+| Web assets in `ios/App/App/public` | synced, identical to the Android ones |
+| Icon and splash sets | generated, light and dark |
+| CocoaPods | **not resolved** — needs macOS |
+| Compiled app | **not built** — needs macOS or the workflow above |
 
 ### Distribution
 

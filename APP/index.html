@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#492094" />
+  <title>Digital Bus Pass</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ====================== SVG icon sprite ====================== -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z"/></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path fill="currentColor" d="M3.4 13.19v6.38c0 .54.44.98.98.98h3.92a2.45 2.45 0 0 0 4.9 0h3.93c.54 0 .98-.44.98-.98v-6.38c0-3.14-2.01-5.81-4.78-6.82.17-.37.24-.76.24-1.15A2.82 2.82 0 0 0 10.75 2.4 2.82 2.82 0 0 0 7.93 5.22c0 .42.1.81.25 1.15C5.41 7.38 3.4 10.05 3.4 13.19Zm7.35 8.83a1.47 1.47 0 0 1-1.47-1.47h2.94c0 .81-.66 1.47-1.47 1.47ZM10.75 3.39a1.84 1.84 0 0 1 1.84 1.83c0 .32-.07.61-.25.88-.49-.1-.98-.15-1.47-.15h-.24c-.52 0-1.01.05-1.47.15a1.73 1.73 0 0 1-.24-.88 1.84 1.84 0 0 1 1.83-1.83Z"/></symbol>
+      <!-- swap / exchange arrows (route card) -->
+      <symbol id="i-swap" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M4 9h14M18 9l-3-3M18 9l-3 3M20 15H6M6 15l3-3M6 15l3 3"/></symbol>
+      <!-- filled icons -->
+      <symbol id="i-home" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></symbol>
+      <symbol id="i-bus" viewBox="0 0 24 24"><path fill="currentColor" d="M4 16c0 .88.39 1.67 1 2.22V20a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h8v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4S4 2.5 4 6v10zm3.5 1a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm9 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM18 11H6V6h12v5z"/></symbol>
+      <symbol id="i-car" viewBox="0 0 24 24"><path fill="currentColor" d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h12v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-8l-2.08-5.99zM6.5 16a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm11 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM5 11l1.5-4.5h11L19 11H5z"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></symbol>
+      <symbol id="i-status" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm-1.5 14L7 13.5l1.4-1.4 2.1 2.1 4.6-4.6L16.5 11 10.5 17z"/></symbol>
+      <symbol id="i-history" viewBox="0 0 24 24"><path fill="currentColor" d="M13 3a9 9 0 0 0-9 9H1l3.9 3.9.07.14L9 12H6a7 7 0 1 1 2.05 4.95l-1.42 1.42A9 9 0 1 0 13 3zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></symbol>
+      <symbol id="i-gear" viewBox="0 0 24 24"><path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54A.49.49 0 0 0 13.9 2.4h-3.84a.49.49 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.49.49 0 0 0 .12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6a3.6 3.6 0 1 1 0-7.2 3.6 3.6 0 0 1 0 7.2z"/></symbol>
+      <symbol id="i-logout" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path fill="currentColor" d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"/></symbol>
+      <symbol id="i-seat" viewBox="0 0 16.308 17.965"><path fill="currentColor" d="M15.185 8.302 6.258 9.402 5.52 7.66l6.607-1c.4.05.719-1.323.276-1.748a8.515 8.515 0 0 0-2.132.035L4.71 5.754 2.739 1.108A1.868 1.868 0 0 0 1.892.171 1.262 1.262 0 0 0 .769.102 1.074 1.074 0 0 0 .023 1.35l3.689 12.162a1.033 1.033 0 0 0 .989.735h3.755v2.363H5.987a1.355 1.355 0 0 0-1.355 1.355h9.2a1.355 1.355 0 0 0-1.355-1.355h-2.469v-2.363h3.506a1.157 1.157 0 0 0 1.064-.7l1.651-3.859A1 1 0 0 0 15.185 8.302Z"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- ====================== Welcome / service selection ====================== -->
+  <div id="welcome">
+    <div class="welcome-inner">
+      <div class="w-title-sm">Welcome To</div>
+      <div class="w-title-lg">TCS eTMS</div>
+      <div class="w-sub">PLEASE SELECT YOUR SERVICE</div>
+      <div class="service-list">
+        <button class="service-pill" data-service="bus">
+          <svg><use href="#i-bus"/></svg><span>Bus Services</span>
+        </button>
+        <button class="service-pill" data-service="cab">
+          <svg><use href="#i-car"/></svg><span>Cab Services</span>
+        </button>
+        <button class="service-pill" data-service="geo">
+          <svg><use href="#i-pin"/></svg><span>Geocode Yourself</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== App shell (Bus Pass) ====================== -->
+  <div id="app" hidden>
+    <header class="toolbar">
+      <button class="icon-btn" id="menuBtn" aria-label="Menu"><svg><use href="#i-menu"/></svg></button>
+      <span class="title" id="screenTitle">Digital Bus Pass</span>
+      <button class="icon-btn bell" id="bellBtn" aria-label="Notifications"><svg><use href="#i-bell"/></svg></button>
+    </header>
+
+    <main class="screen" id="screen-pass"></main>
+    <main class="screen" id="screen-list" hidden></main>
+    <main class="screen" id="screen-form" hidden></main>
+  </div>
+
+  <!-- ====================== Drawer ====================== -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-header"><span id="drawerGreet">Hi, Employee</span></div>
+    <nav>
+      <a data-nav="pass"><svg><use href="#i-home"/></svg> Home</a>
+      <a data-nav="add"><svg><use href="#i-bus"/></svg> Apply Bus Pass</a>
+      <a data-nav="list"><svg><use href="#i-status"/></svg> Buspass Request Status</a>
+      <a data-nav="feedback"><svg><use href="#i-history"/></svg> FeedBack History</a>
+      <a data-nav="welcome"><svg><use href="#i-history"/></svg> Back To Home Page</a>
+      <a data-nav="settings"><svg><use href="#i-gear"/></svg> Settings</a>
+      <a data-nav="logout"><svg><use href="#i-logout"/></svg> Logout</a>
+    </nav>
+  </aside>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/qrcode.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

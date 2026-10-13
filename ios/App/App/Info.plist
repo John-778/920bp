@@ -45,8 +45,12 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<!-- The pass UI is a light design on white. Locking the interface style to
+	     Light keeps WKWebView's native controls - the date and time pickers and
+	     the Route Type wheel on the Apply/Edit form - light to match it. The
+	     splash is black in both appearances, so it is unaffected. -->
 	<key>UIUserInterfaceStyle</key>
-	<string>Dark</string>
+	<string>Light</string>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
 	<!-- The app uses no encryption beyond standard HTTPS, so declaring this

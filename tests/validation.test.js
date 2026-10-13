@@ -5,8 +5,8 @@ import { normalizePass } from '../src/data/schema.js';
 /** The pass the original page shipped with - the baseline that must stay valid. */
 const basePass = () =>
   normalizePass({
-    name: 'VIDUL BHOSALE',
-    employeeId: '2788236',
+    name: 'JOHN DOE',
+    employeeId: '1000001',
     busStop: 'Thane Stn. E Kopari',
     destination: 'TCS Olympus',
     routeType: 'B',
@@ -43,7 +43,7 @@ describe('validatePass', () => {
   it('bounds the employee ID', () => {
     expect(validatePass({ ...basePass(), employeeId: 'ab' }).employeeId).toBeTruthy();
     expect(validatePass({ ...basePass(), employeeId: '1'.repeat(16) }).employeeId).toBeTruthy();
-    expect(validatePass({ ...basePass(), employeeId: 'EMP-2788236' })).toEqual({});
+    expect(validatePass({ ...basePass(), employeeId: 'EMP-1000001' })).toEqual({});
   });
 
   it('requires both ends of the route and refuses a round trip to nowhere', () => {

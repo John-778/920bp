@@ -36,8 +36,8 @@ describe('first run', () => {
     const passes = repo.getPasses();
     expect(passes).toHaveLength(1);
     expect(passes[0]).toMatchObject({
-      name: 'VIDUL BHOSALE',
-      employeeId: '2788236',
+      name: 'JOHN DOE',
+      employeeId: '1000001',
       busStop: 'Thane Stn. E Kopari',
       destination: 'TCS Olympus',
       routeType: 'B',
@@ -222,7 +222,7 @@ describe('backup', () => {
     await repo.importData(exported, { merge: false });
 
     expect(repo.getPasses()).toHaveLength(exported.passes.length);
-    expect(repo.getPasses()[0].employeeId).toBe('2788236');
+    expect(repo.getPasses()[0].employeeId).toBe('1000001');
   });
 
   it('merges without losing what is already stored', async () => {

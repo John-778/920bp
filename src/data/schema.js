@@ -164,8 +164,8 @@ export function seedData() {
   const pass = normalizePass({
     id: newId(),
     title: 'Thane Stn. E Kopari (2026-10)',
-    name: 'VIDUL BHOSALE',
-    employeeId: '2788236',
+    name: 'JOHN DOE',
+    employeeId: '1000001',
     busStop: 'Thane Stn. E Kopari',
     destination: 'TCS Olympus',
     routeType: 'B',

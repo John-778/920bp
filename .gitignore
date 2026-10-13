@@ -40,3 +40,12 @@ xcuserdata/
 # logs
 *.log
 npm-debug.log*
+
+# The standalone app in APP/ is source and IS committed, but not these:
+#   reference/  - phone photos of the real pass; they show a real name and
+#                 employee id, and this repo is public
+#   *.apk       - build output (the debug APK is rebuilt by npm run android:apk)
+#   eTMS.apk    - TCS's own application, not ours to redistribute
+APP/reference/
+APP/*.apk
+*.apk
