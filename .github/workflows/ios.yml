@@ -87,3 +87,68 @@ jobs:
             ios/build/Build/Products/Debug-iphonesimulator/App.app
             launch.png
           if-no-files-found: error
+
+  device-ipa:
+    name: Unsigned .ipa for a physical iPhone
+    runs-on: macos-15
+
+    # Builds for real hardware (arm64, iphoneos SDK) instead of the Simulator,
+    # and packages it as an .ipa. It is deliberately UNSIGNED: signing needs an
+    # Apple identity, which cannot be created in CI without an Apple Developer
+    # account. A sideloading tool (Sideloadly, AltStore) signs it with your own
+    # Apple ID on your PC and installs it over USB - see README section 8.
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Stage the web app
+        run: npm run stage
+
+      - name: Sync it into the Xcode project
+        run: npx cap sync ios
+
+      - name: Resolve CocoaPods
+        working-directory: ios/App
+        run: pod install --repo-update
+
+      - name: Build for device
+        run: |
+          xcodebuild \
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath ios/build-device \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_ENTITLEMENTS="" \
+            build
+
+      - name: Package as .ipa
+        run: |
+          set -euo pipefail
+          APP=ios/build-device/Build/Products/Release-iphoneos/App.app
+
+          # It really is a device build with the web app inside it.
+          lipo -info "$APP/App" | tee /dev/stderr | grep -qv x86_64
+          grep -q 'JOHN DOE' "$APP/public/js/app.js"
+
+          rm -rf Payload && mkdir Payload
+          cp -R "$APP" Payload/
+          zip -qry DigitalBusPass-unsigned.ipa Payload
+          ls -lh DigitalBusPass-unsigned.ipa
+
+      - name: Upload the .ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: DigitalBusPass-ipa-unsigned
+          path: DigitalBusPass-unsigned.ipa
+          if-no-files-found: error
